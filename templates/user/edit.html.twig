@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактирование пользователя{% endblock %}
+
+{% block body %}
+<h1>Редактирование пользователя</h1>
+<form method="POST" action="{{ path('update_user', {'user': user.id}) }}">
+    <input type="hidden" name="_method" value="PUT">
+    <input type="text" name="last_name" value="{{ user.lastName }}">
+    <input type="text" name="first_name" value="{{ user.firstName }}">
+    <input type="text" name="age" value="{{ user.age }}">
+    <input type="text" name="status" value="{{ user.status }}">
+    <input type="text" name="email" value="{{ user.email }}">
+    <input type="text" name="telegram" value="{{ user.telegram }}">
+    <input type="text" name="address" value="{{ user.address }}">
+    <button type="submit">Отправить</button>
+</form>
+
+{% endblock %}

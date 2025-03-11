@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Список пользователей
+{% endblock %}
+
+{% block body %}
+	<h1>Список пользователей</h1>
+	<form method="GET" action="{{ path('index_user') }}">
+		<input type="text" name="q" value="{{ app.request.query.get('q') }}">
+		<button type="submit">Поиск</button>
+	</form>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Имя</th>
+				<th>Фамииля</th>
+				<th>Количество лет</th>
+				<th>Статус</th>
+				<th>Email</th>
+				<th>Telegram</th>
+				<th>Address</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr>
+					<td>{{ user.lastName }}</td>
+					<td>{{ user.firstName }}</td>
+					<td>{{ user.age }}</td>
+					<td>{{ user.status }}</td>
+					<td>{{ user.email }}</td>
+					<td>{{ user.telegram }}</td>
+					<td>{{ user.address }}</td>
+					<td>
+						<a href="{{ path('edit_user', {'user': user.id}) }}">Изменить</a>
+                       <form method="POST" action="{{ path('delete_user', {'user': user.id}) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button>УДАЛИТЬ</button>
+                        </form>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

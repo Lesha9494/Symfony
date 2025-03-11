@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Создание пользователя{% endblock %}
+
+{% block body %}
+<h1>Создание пользователя</h1>
+<form method="POST" action="{{ path('create_user') }}">
+  <input type="text" name="last_name" placeholder="Имя">
+  <input type="text" name="first_name" placeholder="Фамилия">
+  <input type="number" name="age" placeholder="Количество лет">
+  <input type="text" name="status" placeholder="Стктус">
+  <input type="email" name="email" placeholder="Email">
+  <input type="text" name="telegram" placeholder="Telegram">
+  <input type="text" name="address" placeholder="Address">
+  <input type="submit">
+</form>
+{% endblock %}
