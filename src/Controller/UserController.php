@@ -58,7 +58,7 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', ['user' => $user]);
     }
 
-    #[Route('/user/{user}', name: 'update_user', methods: ['POST', 'PUT'])]
+    #[Route('/user/{user}', name: 'update_user', methods: ['PUT'])]
     public function update(User $user, Request $request): Response
     {
         $user->setLastName($request->request->get('last_name', $user->getLastName()));
@@ -74,7 +74,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('index_user');
     }
 
-    #[Route('/user/{user}', name: 'delete_user', methods: ['POST'])]
+    #[Route('/user/{user}', name: 'delete_user', methods: ['DELETE'])]
     public function delete(User $user, EntityManagerInterface $em): Response
     {
         $em->remove($user);
