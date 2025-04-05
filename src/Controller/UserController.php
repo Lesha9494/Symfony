@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\DepartmentRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,10 +20,15 @@ class UserController extends AbstractController
     {
         $query = $request->query->get('q');
 
-        $qb = $userRepository->createQueryBuilder('u');
+        $qb = $userRepository->createQueryBuilder('u')
+        ->leftJoin('u.department', 'd')
+        ->addSelect('d');
+
         if ($query) {
-            $qb->andWhere('u.lastName LIKE :query OR u.firstName LIKE :query OR u.email LIKE :query')
-                ->setParameter('query', '%' . $query . '%');
+            $qb->andWhere(
+                'u.lastName LIKE :query OR u.firstName LIKE :query OR u.email LIKE :query OR d.name LIKE :query'
+            )
+            ->setParameter('query', '%' . $query . '%');
         }
 
         $users = $qb->getQuery()->getResult();
@@ -31,8 +37,10 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/create', name: 'create_user', methods: ['GET', 'POST'])]
-    public function create(Request $request): Response
+    public function create(Request $request, DepartmentRepository $departmentRepository): Response
     {
+        $departments = $departmentRepository->findAll();
+
         if ($request->isMethod('POST')) {
             $user = new User();
             $user->setLastName($request->request->get('last_name'));
@@ -43,23 +51,33 @@ class UserController extends AbstractController
             $user->setTelegram($request->request->get('telegram'));
             $user->setAddress($request->request->get('address'));
 
+            $departmentId = $request->request->get('department');
+            $department = $departmentRepository->find($departmentId);
+            $user->setDepartment($department); 
+
             $this->em->persist($user);
             $this->em->flush();
 
             return $this->redirectToRoute('index_user');
         }
 
-        return $this->render('user/create.html.twig');
+        return $this->render('user/create.html.twig', ['departments' => $departments]);
     }
 
     #[Route('/user/{user}', name: 'edit_user', methods: ['GET'])]
-    public function edit(User $user): Response
+    public function edit(User $user, DepartmentRepository $departmentRepository): Response
     {
-        return $this->render('user/edit.html.twig', ['user' => $user]);
+        $departments = $departmentRepository->findAll();
+    
+        return $this->render('user/edit.html.twig', [
+            'user' => $user,
+            'departments' => $departments,
+        ]);
     }
+    
 
     #[Route('/user/{user}', name: 'update_user', methods: ['PUT'])]
-    public function update(User $user, Request $request): Response
+    public function update(User $user, Request $request, DepartmentRepository $departmentRepository): Response
     {
         $user->setLastName($request->request->get('last_name', $user->getLastName()));
         $user->setFirstName($request->request->get('first_name', $user->getFirstName()));
@@ -68,11 +86,16 @@ class UserController extends AbstractController
         $user->setEmail($request->request->get('email', $user->getEmail()));
         $user->setTelegram($request->request->get('telegram', $user->getTelegram()));
         $user->setAddress($request->request->get('address', $user->getAddress()));
-
+    
+        $departmentId = $request->request->get('department');
+        $department = $departmentRepository->find($departmentId);
+        $user->setDepartment($department);
+    
         $this->em->flush();
-
+    
         return $this->redirectToRoute('index_user');
     }
+    
 
     #[Route('/user/{user}', name: 'delete_user', methods: ['DELETE'])]
     public function delete(User $user, EntityManagerInterface $em): Response

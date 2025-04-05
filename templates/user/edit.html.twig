@@ -13,6 +13,14 @@
     <input type="text" name="email" value="{{ user.email }}">
     <input type="text" name="telegram" value="{{ user.telegram }}">
     <input type="text" name="address" value="{{ user.address }}">
+
+    <select name="department">
+        <option value="">Выбрать отдел</option>
+        {% for dept in departments %}
+            <option value="{{ dept.id }}">{{ dept.name }}</option>
+        {% endfor %}
+    </select>
+
     <button type="submit">Отправить</button>
 </form>
 
