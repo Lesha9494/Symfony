@@ -55,6 +55,15 @@ class UserController extends AbstractController
             $department = $departmentRepository->find($departmentId);
             $user->setDepartment($department); 
 
+            $image = $request->files->get('image');
+
+            if ($image) {
+                $filename = uniqid() . '.' . $image->guessExtension();
+                $image->move('uploads/avatars', $filename);
+                $user->setAvatar($filename);
+            }
+
+
             $this->em->persist($user);
             $this->em->flush();
 
@@ -91,6 +100,14 @@ class UserController extends AbstractController
         $department = $departmentRepository->find($departmentId);
         $user->setDepartment($department);
     
+        $image = $request->files->get('image');
+
+        if ($image) {
+            $filename = uniqid() . '.' . $image->guessExtension();
+            $image->move('uploads/avatars', $filename);
+            $user->setAvatar($filename);
+        }
+
         $this->em->flush();
     
         return $this->redirectToRoute('index_user');

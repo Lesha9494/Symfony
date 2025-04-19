@@ -38,6 +38,9 @@ class User
     #[ORM\JoinColumn(nullable: false)]
     private ?Department $department = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatar;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -137,5 +140,16 @@ class User
         $this->department = $department;
 
         return $this;
+    }
+
+    
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar($avatar)
+    {
+        $this->avatar = $avatar;
     }
 }

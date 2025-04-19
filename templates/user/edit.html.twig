@@ -4,22 +4,25 @@
 
 {% block body %}
 <h1>Редактирование пользователя</h1>
-<form method="POST" action="{{ path('update_user', {'user': user.id}) }}">
+<form method="POST" action="{{ path('update_user', {'user': user.id}) }}" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT">
+    
     <input type="text" name="last_name" value="{{ user.lastName }}">
     <input type="text" name="first_name" value="{{ user.firstName }}">
     <input type="text" name="age" value="{{ user.age }}">
     <input type="text" name="status" value="{{ user.status }}">
-    <input type="text" name="email" value="{{ user.email }}">
+    <input type="email" name="email" value="{{ user.email }}">
     <input type="text" name="telegram" value="{{ user.telegram }}">
     <input type="text" name="address" value="{{ user.address }}">
 
     <select name="department">
         <option value="">Выбрать отдел</option>
         {% for dept in departments %}
-            <option value="{{ dept.id }}">{{ dept.name }}</option>
+            <option value="{{ dept.id }}" {% if dept.id == user.department.id %}selected{% endif %}>{{ dept.name }}</option>
         {% endfor %}
     </select>
+
+    <input type="file" name="image">
 
     <button type="submit">Отправить</button>
 </form>

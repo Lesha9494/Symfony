@@ -21,6 +21,7 @@
 				<th>Telegram</th>
 				<th>Address</th>
 				<th>Отдел</th>
+				<th>Аватар</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -35,6 +36,13 @@
 					<td>{{ user.telegram }}</td>
 					<td>{{ user.address }}</td>
 					<td>{{ user.department.name }}</td>
+					<td>
+						{% if user.avatar %}
+							<img src="/uploads/avatars/{{ user.avatar }}" width="50">
+						{% else %}
+							нету
+						{% endif %}
+						</td>
 					<td>
 						<a href="{{ path('edit_user', {'user': user.id}) }}">Изменить</a>
                        <form method="POST" action="{{ path('delete_user', {'user': user.id}) }}">

@@ -4,7 +4,7 @@
 
 {% block body %}
 <h1>Создание пользователя</h1>
-<form method="POST" action="{{ path('create_user') }}">
+<form method="POST" action="{{ path('create_user') }}" enctype="multipart/form-data">
   <input type="text" name="last_name" placeholder="Имя">
   <input type="text" name="first_name" placeholder="Фамилия">
   <input type="number" name="age" placeholder="Количество лет">
@@ -19,7 +19,8 @@
         <option value="{{ dept.id }}">{{ dept.name }}</option>
     {% endfor %}
 </select>
-
+  <input type="file" name="image">
+  <br>
   <input type="submit">
 </form>
 {% endblock %}
