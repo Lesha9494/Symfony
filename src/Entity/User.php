@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -14,28 +15,49 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Фамилия не может быть пустой")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Фамилия не может быть длиннее {{ limit }} символов"
+    )]
     private ?string $lastName = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Имя не может быть пустым")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Имя не может быть длиннее {{ limit }} символов"
+    )]
     private ?string $firstName = null;
-
+    
     #[ORM\Column]
+    #[Assert\NotNull(message: "Возраст не может быть пустым")]
+    #[Assert\Range(
+        min: 18,
+        max: 120,
+        notInRangeMessage: "Возраст должен быть между {{ min }} и {{ max }}."
+    )]
     private ?int $age = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Статус не может быть пустым")]
     private ?string $status = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Email не может быть пустым")]
     private ?string $email = null;
-
+    
     #[ORM\Column(length: 255)]
     private ?string $telegram = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Адрес не может быть пустым")]
     private ?string $address = null;
+    
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Отдел не может быть пустым")]
     private ?Department $department = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -51,7 +73,7 @@ class User
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
 
@@ -63,7 +85,7 @@ class User
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstName(?string $firstName): static
     {
         $this->firstName = $firstName;
 
@@ -75,7 +97,7 @@ class User
         return $this->age;
     }
 
-    public function setAge(int $age): static
+    public function setAge(?int $age): static
     {
         $this->age = $age;
 
@@ -87,7 +109,7 @@ class User
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
 
@@ -99,7 +121,7 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
@@ -111,7 +133,7 @@ class User
         return $this->telegram;
     }
 
-    public function setTelegram(string $telegram): static
+    public function setTelegram(?string $telegram): static
     {
         $this->telegram = $telegram;
 
@@ -123,7 +145,7 @@ class User
         return $this->address;
     }
 
-    public function setAddress(string $address): static
+    public function setAddress(?string $address): static
     {
         $this->address = $address;
 

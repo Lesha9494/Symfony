@@ -4,23 +4,36 @@
 
 {% block body %}
 <h1>Создание пользователя</h1>
-<form method="POST" action="{{ path('create_user') }}" enctype="multipart/form-data">
-  <input type="text" name="last_name" placeholder="Имя">
-  <input type="text" name="first_name" placeholder="Фамилия">
-  <input type="number" name="age" placeholder="Количество лет">
-  <input type="text" name="status" placeholder="Стктус">
-  <input type="email" name="email" placeholder="Email">
-  <input type="text" name="telegram" placeholder="Telegram">
-  <input type="text" name="address" placeholder="Address">
 
+<p>Количество ошибок: {{ errors|length }}</p>
+
+{% if errors|length > 0 %}
+  <ul>
+    {% for error in errors %}
+      <li>{{ error.message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="POST" action="{{ path('create_user') }}" enctype="multipart/form-data">
+  <input type="text" name="last_name" placeholder="Имя" value="">
+  <input type="text" name="first_name" placeholder="Фамилия" value="">
+  <input type="number" name="age" placeholder="Количество лет" value="">
+  <input type="text" name="status" placeholder="Статус" value="">
+  <input type="email" name="email" placeholder="Email" value="">
+  <input type="text" name="telegram" placeholder="Telegram" value="">
+  <input type="text" name="address" placeholder="Address" value="">
+  
   <select name="department">
     <option value="">Выбрать отдел</option>
     {% for dept in departments %}
-        <option value="{{ dept.id }}">{{ dept.name }}</option>
+      <option value="{{ dept.id }}">{{ dept.name }}</option>
     {% endfor %}
-</select>
+  </select>
+  
   <input type="file" name="image">
   <br>
   <input type="submit">
 </form>
+
 {% endblock %}

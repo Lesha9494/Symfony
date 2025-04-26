@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -17,7 +18,7 @@ class UserController extends AbstractController
 
     #[Route('/user', name: 'index_user')]
     public function index(Request $request, UserRepository $userRepository): Response
-    {
+    {   
         $query = $request->query->get('q');
 
         $qb = $userRepository->createQueryBuilder('u')
@@ -37,41 +38,59 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/create', name: 'create_user', methods: ['GET', 'POST'])]
-    public function create(Request $request, DepartmentRepository $departmentRepository): Response
-    {
+    public function create(
+        Request $request,
+        DepartmentRepository $departmentRepository,
+        ValidatorInterface $validator
+    ): Response {
         $departments = $departmentRepository->findAll();
-
+        $user = new User();
+    
         if ($request->isMethod('POST')) {
-            $user = new User();
             $user->setLastName($request->request->get('last_name'));
             $user->setFirstName($request->request->get('first_name'));
-            $user->setAge($request->request->get('age'));
+            $user->setAge((int) $request->request->get('age'));
             $user->setStatus($request->request->get('status'));
             $user->setEmail($request->request->get('email'));
             $user->setTelegram($request->request->get('telegram'));
             $user->setAddress($request->request->get('address'));
-
+    
             $departmentId = $request->request->get('department');
-            $department = $departmentRepository->find($departmentId);
-            $user->setDepartment($department); 
-
+            if ($departmentId) {
+                $department = $departmentRepository->find($departmentId);
+                $user->setDepartment($department);
+            }
+    
             $image = $request->files->get('image');
-
             if ($image) {
                 $filename = uniqid() . '.' . $image->guessExtension();
                 $image->move('uploads/avatars', $filename);
                 $user->setAvatar($filename);
             }
+    
+            $errors = $validator->validate($user);
 
-
+            if (count($errors) > 0) {
+                return $this->render('user/create.html.twig', [
+                    'departments' => $departments,
+                    'user' => $user,
+                    'errors' => $errors,
+                ]);                
+            }
+    
             $this->em->persist($user);
             $this->em->flush();
-
+    
             return $this->redirectToRoute('index_user');
         }
-
-        return $this->render('user/create.html.twig', ['departments' => $departments]);
+    
+        return $this->render('user/create.html.twig', [
+            'departments' => $departments,
+            'user' => $user,
+            'errors' => null,
+        ]);
     }
+    
 
     #[Route('/user/{user}', name: 'edit_user', methods: ['GET'])]
     public function edit(User $user, DepartmentRepository $departmentRepository): Response
